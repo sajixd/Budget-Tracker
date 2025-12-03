@@ -193,17 +193,16 @@ cd backend
 # Install dependencies
 npm install
 
-# Create .env file in backend folder
-cat > .env << EOF
-MONGO_URI=mongodb://localhost:27017/budget-tracker
-JWT_SECRET=your_jwt_secret_key_here_change_in_production
-PORT=5000
-NODE_ENV=development
-EOF
+# Create .env file from example
+cp .env.example .env
 
-# Update MONGO_URI if using MongoDB Atlas
-# Replace with your MongoDB connection string
+# Edit .env and fill in your actual values
+# - MONGO_URI: Your MongoDB connection string
+# - JWT_SECRET: A strong random secret key
+nano .env  # or use your preferred editor
 ```
+
+**Important**: Never commit `.env` file to version control. The `.gitignore` file is configured to prevent this.
 
 ### Step 3: Setup Frontend
 
@@ -221,21 +220,38 @@ npm install
 
 ### Backend Configuration (.env)
 
-```env
-# Database Connection
-MONGO_URI=mongodb://localhost:27017/budget-tracker
-# OR for MongoDB Atlas:
-# MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/budget-tracker
+1. **Create .env file** (copy from `.env.example`):
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
 
-# JWT Secret (Change this in production!)
-JWT_SECRET=your_secret_key_here_minimum_32_characters
+2. **Edit `.env`** with your values:
+   ```env
+   # Database Connection
+   MONGO_URI=mongodb://localhost:27017/budget-tracker
+   # OR for MongoDB Atlas:
+   # MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/budget-tracker
 
-# Server Port
-PORT=5000
+   # JWT Secret (Change this in production!)
+   JWT_SECRET=your_secret_key_here_minimum_32_characters
 
-# Environment
-NODE_ENV=development
-```
+   # Server Port
+   PORT=5000
+
+   # Environment
+   NODE_ENV=development
+   ```
+
+3. **Generate a strong JWT_SECRET**:
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+   ```
+
+**⚠️ Security Note**: 
+- Never commit `.env` file to version control
+- `.env` is listed in `.gitignore`
+- Use `.env.example` as template for developers
+- Change `JWT_SECRET` in production
 
 ### Frontend Configuration
 
