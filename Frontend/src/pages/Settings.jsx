@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { Layout } from '../components/layout/Layout';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -8,9 +9,11 @@ import { Modal } from '../components/ui/Modal';
 
 export default function Settings() {
       const { user, updateProfile, deleteAccount } = useAuth();
+      const navigate = useNavigate();
       const [name, setName] = useState(user?.name || '');
       const [passwords, setPasswords] = useState({ current: '', new: '' });
       const [message, setMessage] = useState({ type: '', text: '' });
+      const [isDeleting, setIsDeleting] = useState(false);
 
       const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
       const [deletePassword, setDeletePassword] = useState('');
@@ -19,11 +22,17 @@ export default function Settings() {
             e.preventDefault();
             setMessage({ type: '', text: '' });
 
+            if (!name.trim()) {
+                  setMessage({ type: 'error', text: 'Name cannot be empty' });
+                  return;
+            }
+
             const res = await updateProfile({ name });
             if (res.success) {
-                  setMessage({ type: 'success', text: 'Profile updated successfully' });
+                  setMessage({ type: 'success', text: 'Profile updated successfully!' });
+                  setTimeout(() => setMessage({ type: '', text: '' }), 3000);
             } else {
-                  setMessage({ type: 'error', text: res.error });
+                  setMessage({ type: 'error', text: res.error || 'Failed to update profile' });
             }
       };
 
@@ -31,23 +40,54 @@ export default function Settings() {
             e.preventDefault();
             setMessage({ type: '', text: '' });
 
+            if (!passwords.current.trim() || !passwords.new.trim()) {
+                  setMessage({ type: 'error', text: 'Please fill in all password fields' });
+                  return;
+            }
+
+            if (passwords.current === passwords.new) {
+                  setMessage({ type: 'error', text: 'New password must be different from current password' });
+                  return;
+            }
+
+            if (passwords.new.length < 6) {
+                  setMessage({ type: 'error', text: 'New password must be at least 6 characters' });
+                  return;
+            }
+
             const res = await updateProfile({
                   password: passwords.new,
                   currentPassword: passwords.current
             });
 
             if (res.success) {
-                  setMessage({ type: 'success', text: 'Password updated successfully' });
+                  setMessage({ type: 'success', text: 'Password updated successfully!' });
                   setPasswords({ current: '', new: '' });
+                  setTimeout(() => setMessage({ type: '', text: '' }), 3000);
             } else {
-                  setMessage({ type: 'error', text: res.error });
+                  setMessage({ type: 'error', text: res.error || 'Failed to update password' });
             }
       };
 
       const handleDeleteAccount = async () => {
+            if (!deletePassword.trim()) {
+                  setMessage({ type: 'error', text: 'Please enter your password to confirm deletion' });
+                  return;
+            }
+
+            setIsDeleting(true);
             const res = await deleteAccount(deletePassword);
-            if (!res.success) {
-                  alert(res.error);
+            setIsDeleting(false);
+
+            if (res.success) {
+                  setMessage({ type: 'success', text: 'Account deleted successfully. Redirecting...' });
+                  setTimeout(() => {
+                        navigate('/login');
+                  }, 2000);
+            } else {
+                  setMessage({ type: 'error', text: res.error || 'Failed to delete account' });
+                  setIsDeleteModalOpen(false);
+                  setDeletePassword('');
             }
       };
 
@@ -131,20 +171,46 @@ export default function Settings() {
                               </CardContent>
                         </Card>
 
-                        <Modal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} title="Delete Account">
+                        <Modal isOpen={isDeleteModalOpen} onClose={() => {
+                              setIsDeleteModalOpen(false);
+                              setDeletePassword('');
+                        }} title="Delete Account">
                               <div className="space-y-4">
                                     <p className="text-sm text-gray-600 dark:text-gray-300">
-                                          Are you sure you want to delete your account? Please enter your password to confirm.
+                                          <strong>Warning:</strong> This action cannot be undone. All your data including budgets and expenses will be permanently deleted.
+                                    </p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                                          Please enter your password to confirm account deletion:
                                     </p>
                                     <Input
                                           type="password"
                                           placeholder="Enter your password"
                                           value={deletePassword}
                                           onChange={(e) => setDeletePassword(e.target.value)}
+                                          onKeyDown={(e) => {
+                                                if (e.key === 'Enter' && !isDeleting) {
+                                                      handleDeleteAccount();
+                                                }
+                                          }}
                                     />
                                     <div className="flex justify-end gap-2">
-                                          <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)}>Cancel</Button>
-                                          <Button variant="destructive" onClick={handleDeleteAccount}>Confirm Delete</Button>
+                                          <Button 
+                                                variant="ghost" 
+                                                onClick={() => {
+                                                      setIsDeleteModalOpen(false);
+                                                      setDeletePassword('');
+                                                }}
+                                                disabled={isDeleting}
+                                          >
+                                                Cancel
+                                          </Button>
+                                          <Button 
+                                                variant="destructive" 
+                                                onClick={handleDeleteAccount}
+                                                disabled={isDeleting}
+                                          >
+                                                {isDeleting ? 'Deleting...' : 'Confirm Delete'}
+                                          </Button>
                                     </div>
                               </div>
                         </Modal>
