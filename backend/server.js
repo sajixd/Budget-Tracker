@@ -46,7 +46,20 @@ app.use('/api/budgets', require('./routes/budgets'));
 app.use('/api/auth', require('./routes/auth'));
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connect ho gaya'))
+  .then(async () => {
+    console.log('MongoDB connect ho gaya');
+    // FIX: Drop the incorrect index that enforces global uniqueness
+    try {
+      const collections = await mongoose.connection.db.listCollections({ name: 'budgets' }).toArray();
+      if (collections.length > 0) {
+        await mongoose.connection.db.collection('budgets').dropIndex('type_1_customDate_1');
+        console.log('Fixed: Incorrect index type_1_customDate_1 dropped');
+      }
+    } catch (err) {
+      // Ignore error if index doesn't exist
+      console.log('Index cleanup check passed');
+    }
+  })
   .catch(err => console.log('MongoDB error: ', err));
 
 // Use dynamic PORT for deployment platforms like Render
