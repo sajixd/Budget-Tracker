@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Moon, Sun, Wallet, LogOut, User } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -11,12 +12,12 @@ export function Navbar() {
       return (
             <nav className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md dark:border-gray-800 dark:bg-dark-bg/80">
                   <div className="container mx-auto flex h-16 items-center justify-between px-4">
-                        <div className="flex items-center gap-2">
+                        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-white">
                                     <Wallet className="h-5 w-5" />
                               </div>
-                              <span className="text-xl font-bold text-gray-900 dark:text-white">BudgetTracker</span>
-                        </div>
+                              <span className="text-xl font-bold text-gray-900 dark:text-white">Budget Tracker</span>
+                        </Link>
 
                         <div className="flex items-center gap-4">
                               {user && (
