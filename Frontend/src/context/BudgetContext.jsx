@@ -45,7 +45,8 @@ export function BudgetProvider({ children }) {
                         await fetchBudgets();
                         return { success: true };
                   }
-                  return { success: false, error: 'Failed to save budget' };
+                  const data = await res.json();
+                  return { success: false, error: data.message || 'Failed to save budget' };
             } catch (error) {
                   return { success: false, error: error.message };
             }

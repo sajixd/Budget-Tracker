@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Moon, Sun, Wallet, LogOut, User } from 'lucide-react';
+import { Moon, Sun, Wallet, LogOut, User, Settings } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/Button';
@@ -40,9 +40,16 @@ export function Navbar() {
                                     </Button>
 
                                     {user && (
-                                          <Button variant="ghost" size="icon" onClick={logout} className="rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
-                                                <LogOut className="h-5 w-5" />
-                                          </Button>
+                                          <>
+                                                <Link to="/settings">
+                                                      <Button variant="ghost" size="icon" className="rounded-full sm:hidden">
+                                                            <Settings className="h-5 w-5 text-gray-700 dark:text-gray-200" />
+                                                      </Button>
+                                                </Link>
+                                                <Button variant="ghost" size="icon" onClick={logout} className="rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
+                                                      <LogOut className="h-5 w-5" />
+                                                </Button>
+                                          </>
                                     )}
                               </div>
                         </div>
