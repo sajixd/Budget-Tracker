@@ -47,7 +47,7 @@ router.post('/', auth, async (req, res) => {
             res.json(budget);
       } catch (error) {
             console.error("Error setting budget:", error);
-            res.status(500).json({ message: "Server Error" });
+            res.status(500).json({ message: error.message || "Server Error" });
       }
 });
 
