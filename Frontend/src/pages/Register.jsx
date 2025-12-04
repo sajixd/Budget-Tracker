@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Moon, Sun } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 
 export default function Register() {
       const { register } = useAuth();
+      const { theme, toggleTheme } = useTheme();
       const navigate = useNavigate();
       const [form, setForm] = useState({ name: '', email: '', password: '' });
       const [error, setError] = useState('');
@@ -23,6 +26,17 @@ export default function Register() {
 
       return (
             <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-dark-bg">
+                  {/* Dark Mode Toggle */}
+                  <div className="fixed right-4 top-4">
+                        <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full">
+                              {theme === 'dark' ? (
+                                    <Sun className="h-5 w-5 text-yellow-500" />
+                              ) : (
+                                    <Moon className="h-5 w-5 text-gray-700" />
+                              )}
+                        </Button>
+                  </div>
+
                   <Card className="w-full max-w-md">
                         <CardHeader>
                               <CardTitle className="text-center text-2xl">Register</CardTitle>
