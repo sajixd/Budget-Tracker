@@ -3,6 +3,7 @@ import { useExpenses } from "./ExpenseContext";
 import { useAuth } from "./AuthContext";
 
 const BudgetContext = createContext();
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export function BudgetProvider({ children }) {
       const { expenses } = useExpenses();
@@ -16,7 +17,7 @@ export function BudgetProvider({ children }) {
             if (!token) return;
             try {
                   setLoading(true);
-                  const res = await fetch('http://localhost:5000/api/budgets', {
+                  const res = await fetch(`${API_URL}/api/budgets`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                   });
                   if (res.ok) {
@@ -32,7 +33,7 @@ export function BudgetProvider({ children }) {
 
       const setBudget = async (amount, type = selectedType, date = customDate) => {
             try {
-                  const res = await fetch('http://localhost:5000/api/budgets', {
+                  const res = await fetch(`${API_URL}/api/budgets`, {
                         method: 'POST',
                         headers: {
                               'Content-Type': 'application/json',

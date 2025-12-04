@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export function AuthProvider({ children }) {
       const [user, setUser] = useState(null);
@@ -10,7 +11,7 @@ export function AuthProvider({ children }) {
       useEffect(() => {
             if (token) {
                   // Fetch user if token exists
-                  fetch('http://localhost:5000/api/auth/user', {
+                  fetch(`${API_URL}/api/auth/user`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                   })
                         .then(res => {
@@ -29,7 +30,7 @@ export function AuthProvider({ children }) {
 
       const login = async (email, password) => {
             try {
-                  const res = await fetch('http://localhost:5000/api/auth/login', {
+                  const res = await fetch(`${API_URL}/api/auth/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email, password }),
@@ -48,7 +49,7 @@ export function AuthProvider({ children }) {
 
       const register = async (name, email, password) => {
             try {
-                  const res = await fetch('http://localhost:5000/api/auth/register', {
+                  const res = await fetch(`${API_URL}/api/auth/register`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ name, email, password }),
@@ -73,7 +74,7 @@ export function AuthProvider({ children }) {
 
       const updateProfile = async (data) => {
             try {
-                  const res = await fetch('http://localhost:5000/api/auth/update', {
+                  const res = await fetch(`${API_URL}/api/auth/update`, {
                         method: 'PUT',
                         headers: {
                               'Content-Type': 'application/json',
@@ -93,7 +94,7 @@ export function AuthProvider({ children }) {
 
       const deleteAccount = async (password) => {
             try {
-                  const res = await fetch('http://localhost:5000/api/auth/delete', {
+                  const res = await fetch(`${API_URL}/api/auth/delete`, {
                         method: 'DELETE',
                         headers: {
                               'Content-Type': 'application/json',

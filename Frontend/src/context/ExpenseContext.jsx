@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
 
 const ExpenseContext = createContext();
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export function ExpenseProvider({ children }) {
       const [expenses, setExpenses] = useState([]);
@@ -14,7 +15,7 @@ export function ExpenseProvider({ children }) {
             if (!token) return;
             try {
                   setLoading(true);
-                  const res = await fetch('http://localhost:5000/api/expenses', {
+                  const res = await fetch(`${API_URL}/api/expenses`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                   });
                   if (!res.ok) throw new Error('Failed to fetch expenses');
@@ -30,7 +31,7 @@ export function ExpenseProvider({ children }) {
 
       const addExpense = async (expenseData) => {
             try {
-                  const res = await fetch('http://localhost:5000/api/expenses/add', {
+                  const res = await fetch(`${API_URL}/api/expenses/add`, {
                         method: 'POST',
                         headers: {
                               'Content-Type': 'application/json',
@@ -51,7 +52,7 @@ export function ExpenseProvider({ children }) {
 
       const deleteExpense = async (id) => {
             try {
-                  const res = await fetch(`http://localhost:5000/api/expenses/${id}`, {
+                  const res = await fetch(`${API_URL}/api/expenses/${id}`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${token}` }
                   });
