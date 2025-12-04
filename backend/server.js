@@ -12,7 +12,8 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5173', // Local development
   'http://localhost:5174',
-  process.env.FRONTEND_URL // Production Vercel URL
+  'https://budget-tracker-ebon-rho.vercel.app', // Production Vercel URL (hardcoded as fallback)
+  process.env.FRONTEND_URL // Production Vercel URL from env
 ].filter(Boolean); // Remove undefined values
 
 app.use(cors({
